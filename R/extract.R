@@ -12,10 +12,10 @@
 #' ex_file = system.file("extdata", "example.pptx",
 #' package = "ariExtra")
 #' pptx_notes(ex_file)
-#' pptx_slide_note_df(ex_file)
-#' pptx_slide_text_df(ex_file)
+#' extract_slide_note(ex_file)
+#' extract_slide_text(ex_file)
 extract_notes = function(file, ...) {
-  df = pptx_slide_note_df(file, ...)
+  df = extract_slide_note(file, ...)
   if (is.null(df)) {
     return(NULL)
   }
@@ -35,17 +35,15 @@ extract_notes = function(file, ...) {
   return(res)
 }
 
-#' @export
-#' @rdname pptx_notes
-pptx_slide_text_df = function(file, ...) {
-
+# Create a dataframe of slide xml files and the text on the slides
+extract_slide_text = function(file, ...) {
   L = unzip_pptx(file)
   slides = L$slides
 
   if (length(slides) > 0) {
     # in case empty notes
     res = lapply(slides, function(x) {
-      xx = xml_notes(x, collapse_text = FALSE, ...)
+      xx = extract_notes_xml(x, collapse_text = FALSE, ...)
       if (length(xx) == 0) {
         return(NULL)
       }
@@ -65,10 +63,8 @@ pptx_slide_text_df = function(file, ...) {
   }
 }
 
-#' @export
-#' @rdname pptx_notes
-pptx_slide_note_df = function(file, ...) {
-
+# Create a dataframe of slide xml files and the respective notes under the slides
+extract_slide_note = function(file, ...) {
   L = unzip_pptx(file)
   notes = L$notes
   slides = L$slides
@@ -88,7 +84,7 @@ pptx_slide_note_df = function(file, ...) {
       if (file.size(x) == 0) {
         xx = ""
       } else {
-        xx = xml_notes(x, collapse_text = FALSE, ...)
+        xx = extract_notes_xml(x, collapse_text = FALSE, ...)
       }
       if (length(xx) == 0) {
         xx = ""
@@ -109,7 +105,7 @@ pptx_slide_note_df = function(file, ...) {
   }
 }
 
-
+# Reorder XML files
 reorder_xml = function(files) {
   if (length(files) == 0) {
     return(files)
@@ -125,23 +121,25 @@ reorder_xml = function(files) {
   files = files[order(nums)]
 }
 
-#' @export
-#' @rdname pptx_notes
+# Unzip PPTX and extract XML files of slides, notes
 unzip_pptx = function(file) {
   tdir = tempfile()
   dir.create(tdir)
+  # Extract folders from pptx
   res = unzip(file, exdir = tdir)
   rm(res)
+
+  # Reorder xml slide files
   slide_dir = file.path(tdir, "ppt", "slides")
-  slides = list.files(path = slide_dir, pattern = "[.]xml$",
-                      full.names = TRUE)
+  slides = list.files(path = slide_dir, pattern = "[.]xml$", full.names = TRUE)
   slides = reorder_xml(slides)
 
+  # Reorder xml note files
   note_dir = file.path(tdir, "ppt", "notesSlides")
-  notes = list.files(path = note_dir, pattern = "[.]xml$",
-                     full.names = TRUE)
+  notes = list.files(path = note_dir, pattern = "[.]xml$", full.names = TRUE)
   notes = reorder_xml(notes)
 
+  # Copy core.xml file from ariExtra into docProps/core.xml
   tdir = normalizePath(tdir)
   props_dir = file.path(tdir, "docProps")
   props_file = file.path(props_dir, "core.xml")
@@ -153,14 +151,10 @@ unzip_pptx = function(file) {
               overwrite = TRUE)
   }
 
-  L = list(slides = slides,
-           notes = notes,
-           slide_dir = slide_dir,
-           note_dir = note_dir,
-           props_dir = props_dir,
-           props_file = props_file,
-           root_dir = tdir)
-  return(L)
+  list(slides = slides, notes = notes,
+       slide_dir = slide_dir, note_dir = note_dir,
+       props_dir = props_dir, props_file = props_file,
+       root_dir = tdir)
 }
 
 #' Extract Notes from XML
