@@ -1,4 +1,3 @@
-
 #' Convert a PPTX file to a PDF file
 #'
 #' Uses `docxtractr::convert_to_pdf()` for conversion.

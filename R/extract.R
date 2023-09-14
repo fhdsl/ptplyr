@@ -1,7 +1,7 @@
 #' Extract Speaker Notes from a PowerPoint
 #'
 #' @param file Character. Path for `PPTX` file
-#' @param ... additional arguments to pass to \code{\link{xml_notes}},
+#' @param ... additional arguments to pass to `extract_slide_note()`
 #' particularly \code{xpath}
 #'
 #' @return Either a character vector or `NULL`
@@ -11,9 +11,7 @@
 #' @examples
 #' ex_file = system.file("extdata", "example.pptx",
 #' package = "ariExtra")
-#' pptx_notes(ex_file)
-#' extract_slide_note(ex_file)
-#' extract_slide_text(ex_file)
+#' extract_notes(ex_file)
 extract_notes = function(file, ...) {
   df = extract_slide_note(file, ...)
   if (is.null(df)) {
