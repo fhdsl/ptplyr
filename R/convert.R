@@ -37,9 +37,7 @@ convert_pptx_pdf = function(path, verbose = TRUE) {
 #'
 #' @importFrom pdftools poppler_config pdf_info pdf_convert
 #' @export
-convert_pdf_png = function(path,
-                       verbose = TRUE,
-                       dpi = 600) {
+convert_pdf_png = function(path, verbose = TRUE, dpi = 600) {
   fmts = pdftools::poppler_config()$supported_image_formats
   if ("png" %in% fmts) {
     format = "png"
