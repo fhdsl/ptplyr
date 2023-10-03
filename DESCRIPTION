@@ -1,10 +1,10 @@
 Package: ptplyr
-Title: What the Package Does (One Line, Title Case)
+Title: PowerPoint Manipulation
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Howard", "Baek", , "howardbaek.fh@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "009-0000-8942-1618"))
+Description: The goal of ptplyr is to provide a set of functions designed for manipulating Microsoft PowerPoint files.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
